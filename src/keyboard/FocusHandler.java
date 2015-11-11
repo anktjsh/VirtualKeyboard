@@ -14,6 +14,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -62,17 +63,28 @@ public class FocusHandler {
                 lastScene.setRoot(keyboard);
             } else {
                 removeKeyboard();
-
             }
         });
     }
 
     public void removeKeyboard() {
-        if (keyboard instanceof StackPane) {
+        //if (keyboard instanceof StackPane) {
+        if (keyboard.getChildren().get(0).equals(previousRoot)) {
             keyboard.getChildren().remove(previousRoot);
         } else {
-            //((ScrollPane)((BorderPane)keyboard).getCenter()).setContent(null);
-        }        
+            //keyboard.getChildren().get(0);
+            //keyboard.getChildren().clear();
+            if (previousRoot.getParent() != null) {
+                ((VBox) previousRoot.getParent()).getChildren().remove(previousRoot);
+            }
+            //((VBox)(keyboard.getChildren().get(1))).getChildren().remove(previousRoot);
+        }
+//        } else {
+//            //((ScrollPane)((BorderPane)keyboard).getCenter()).setContent(null);
+//        }        
+        if (previousRoot.getParent() != null) {
+            System.out.println(previousRoot.getParent().getClass().getName());
+        }
         lastScene.setRoot(previousRoot);
     }
 
@@ -87,14 +99,15 @@ public class FocusHandler {
             sp.getChildren().add(inputScene);
             return sp;
         } else {
-            VBox vb = new VBox();
-            vb.getChildren().add(pa);
+            StackPane sp = new StackPane();
+            HBox hb = new HBox();
+            hb.setMinHeight(loc - height);
+            VBox vb = new VBox(pa, hb);
+            sp.getChildren().add(vb);
             InputScene inputScene = InputScene.getInputScene(tl);
-            //vb.setAlignment(Pos.BOTTOM_CENTER);
-
-            vb.getChildren().add(inputScene);
-//            return vb;
-            return new BorderPane(new ScrollPane(vb));
+            StackPane.setAlignment(inputScene, Pos.BOTTOM_CENTER);
+            sp.getChildren().add(inputScene);
+            return sp;
         }
     }
 

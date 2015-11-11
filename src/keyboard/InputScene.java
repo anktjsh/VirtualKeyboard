@@ -14,6 +14,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -47,7 +48,7 @@ public class InputScene extends BorderPane {
     private InputScene() {
         Rectangle2D vb = Screen.getPrimary().getVisualBounds();
         double a = vb.getWidth() - 130;
-        double b = (vb.getHeight() *0.4);
+        double b = (vb.getHeight() * 0.4);
         setStyle("-fx-background-color:white;");
         total = new VBox(10);
         setCenter(total);
@@ -64,15 +65,40 @@ public class InputScene extends BorderPane {
         for (int x = 0; x < letters.size(); x++) {
             letters.get(x).setMaxWidth(a / 10);
             letters.get(x).setMinWidth(a / 10);
-            letters.get(x).setMinHeight(b / 5);
-            letters.get(x).setMaxHeight(b / 5);
+            letters.get(x).setMinHeight(b / 4);
+            letters.get(x).setMaxHeight(b / 4);
             letters.get(x).setFont(new Font(Math.sqrt(a * b) / 25));
             letters.get(x).setFocusTraversable(false);
         }
-        SHIFT.setMaxWidth(a / 10);
-        SHIFT.setMinWidth(a / 10);
-        SHIFT.setMinHeight(b / 5);
-        SHIFT.setMaxHeight(b / 5);
+        for (int x = 0; x < numbers.size(); x++) {
+            numbers.get(x).setMaxWidth(a / 10);
+            numbers.get(x).setMinWidth(a / 10);
+            numbers.get(x).setMinHeight(b / 4);
+            numbers.get(x).setMaxHeight(b / 4);
+            numbers.get(x).setFont(new Font(Math.sqrt(a * b) / 25));
+            numbers.get(x).setFocusTraversable(false);
+        }
+        for (int x = 0; x < symbols1.size(); x++) {
+            symbols1.get(x).setMaxWidth(a / 10);
+            symbols1.get(x).setMinWidth(a / 10);
+            symbols1.get(x).setMinHeight(b / 4);
+            symbols1.get(x).setMaxHeight(b / 4);
+            symbols1.get(x).setFont(new Font(Math.sqrt(a * b) / 25));
+            symbols1.get(x).setFocusTraversable(false);
+        }
+        for (int x = 0; x < punctuations.size(); x++) {
+            punctuations.get(x).setMaxWidth(a / 7);
+            punctuations.get(x).setMinWidth(a / 7);
+            punctuations.get(x).setMinHeight(b / 4);
+            punctuations.get(x).setMaxHeight(b / 4);
+            punctuations.get(x).setFont(new Font(Math.sqrt(a * b) / 25));
+            punctuations.get(x).setFocusTraversable(false);
+        }
+
+        SHIFT.setMaxWidth(a / 7);
+        SHIFT.setMinWidth(a / 7);
+        SHIFT.setMinHeight(b / 4);
+        SHIFT.setMaxHeight(b / 4);
         SHIFT.setFont(new Font(Math.sqrt(a * b) / 25));
         SHIFT.setOnMouseClicked((e) -> {
             int clic = e.getClickCount();
@@ -91,10 +117,10 @@ public class InputScene extends BorderPane {
                 SHIFT.setStyle("-fx-background-color:blue;");
             }
         });
-        BACK.setMaxWidth(a / 10);
-        BACK.setMinWidth(a / 10);
-        BACK.setMinHeight(b / 5);
-        BACK.setMaxHeight(b / 5);
+        BACK.setMaxWidth(a / 7);
+        BACK.setMinWidth(a / 7);
+        BACK.setMinHeight(b / 4);
+        BACK.setMaxHeight(b / 4);
         BACK.setFont(new Font(Math.sqrt(a * b) / 25));
         BACK.setOnAction((e) -> {
             if (current != null) {
@@ -105,19 +131,30 @@ public class InputScene extends BorderPane {
                 }
             }
         });
-        layers[4].getChildren().addAll(CHANGE, SPACE, DOWN, ENTER);
+        layers[4].getChildren().addAll(CHANGE, DOWN, SPACE, ENTER);
         CHANGE.setOnAction((e) -> {
             if (CHANGE.getText().equals("123")) {
+                toNumbers();
                 CHANGE.setText("abc");
             } else {
+                toLetters();
                 CHANGE.setText("123");
+            }
+        });
+        CHANGE2.setOnAction((e) -> {
+            if (CHANGE2.getText().equals("123")) {
+                //toNumbersFromSymbols();
+            } else {
+                //toSymbols();
             }
         });
         ENTER.setOnAction((e) -> {
             if (current != null) {
                 if (current instanceof TextField) {
-                    TextField tf = (TextField)current;
-                    tf.getOnAction().handle(new ActionEvent(null, tf));
+                    TextField tf = (TextField) current;
+                    if (tf.getOnAction() != null) {
+                        tf.getOnAction().handle(new ActionEvent(null, tf));
+                    }
                 } else {
                     current.insertText(current.getCaretPosition(), "\n");
                 }
@@ -132,42 +169,81 @@ public class InputScene extends BorderPane {
             FocusHandler.getInputScene().removeKeyboard();
         });
         CHANGE.setFocusTraversable(false);
+        CHANGE2.setFocusTraversable(false);
         SPACE.setFocusTraversable(false);
         ENTER.setFocusTraversable(false);
         BACK.setFocusTraversable(false);
         DOWN.setFocusTraversable(false);
 
-        CHANGE.setMaxWidth(a / 5);
-        CHANGE.setMinWidth(a / 5);
-        CHANGE.setMinHeight(b / 5);
-        CHANGE.setMaxHeight(b / 5);
+        CHANGE.setMaxWidth(a / 8);
+        CHANGE.setMinWidth(a / 8);
+        CHANGE.setMinHeight(b / 4);
+        CHANGE.setMaxHeight(b / 4);
         CHANGE.setFont(new Font(Math.sqrt(a * b) / 25));
 
-        SPACE.setMinWidth(a / 3);
-        SPACE.setMaxWidth(a / 3);
-        SPACE.setMinHeight(b / 5);
-        SPACE.setMaxHeight(b / 5);
+        CHANGE2.setMaxWidth(a / 8);
+        CHANGE2.setMinWidth(a / 8);
+        CHANGE2.setMinHeight(b / 4);
+        CHANGE2.setMaxHeight(b / 4);
+        CHANGE2.setFont(new Font(Math.sqrt(a * b) / 25));
+
+        SPACE.setMinWidth(a / 1.5);
+        SPACE.setMaxWidth(a / 1.5);
+        SPACE.setMinHeight(b / 4);
+        SPACE.setMaxHeight(b / 4);
         SPACE.setFont(new Font(Math.sqrt(a * b) / 25));
 
-        ENTER.setMaxWidth(a / 5);
-        ENTER.setMinWidth(a / 5);
-        ENTER.setMinHeight(b / 5);
-        ENTER.setMaxHeight(b / 5);
+        ENTER.setMaxWidth(a / 8);
+        ENTER.setMinWidth(a / 8);
+        ENTER.setMinHeight(b / 4);
+        ENTER.setMaxHeight(b / 4);
         ENTER.setFont(new Font(Math.sqrt(a * b) / 25));
-        
-        DOWN.setMaxWidth(a / 5);
-        DOWN.setMinWidth(a / 5);
-        DOWN.setMinHeight(b / 5);
-        DOWN.setMaxHeight(b / 5);
+
+        DOWN.setMaxWidth(a / 8);
+        DOWN.setMinWidth(a / 8);
+        DOWN.setMinHeight(b / 4);
+        DOWN.setMaxHeight(b / 4);
         DOWN.setFont(new Font(Math.sqrt(a * b) / 25));
 
-        total.getChildren().addAll(layers[1], layers[2], 
+        total.getChildren().addAll(layers[1], layers[2],
                 layers[3], layers[4]);
         setMaxWidth(vb.getWidth());
         setMinWidth(vb.getWidth());
         setMaxHeight(vb.getHeight() / 2);
         setMinHeight(vb.getHeight() / 2);
 
+//        setOnKeyPressed((e) -> {
+//            getKey(e.getText());
+//        });
+    }
+
+//    public void getKey(String text) {
+//        if (!text.isEmpty()) {
+//            for (Key k : letters) {
+//                if (k.getText().equalsIgnoreCase(text)) {
+//                    k.fire();
+//                }
+//            }
+//        }
+//    }
+    private void toLetters() {
+        layers[1].getChildren().clear();
+        layers[2].getChildren().clear();
+        layers[3].getChildren().clear();
+        layers[1].getChildren().addAll(top);
+        layers[2].getChildren().addAll(mid);
+        layers[3].getChildren().addAll(SHIFT, Z, X, C, V, B, N, M, BACK);
+    }
+
+    private void toNumbers() {
+        layers[1].getChildren().clear();
+        layers[2].getChildren().clear();
+        layers[3].getChildren().clear();
+        layers[1].getChildren().addAll(numbers);
+        layers[2].getChildren().addAll(symbols1);
+        layers[3].getChildren().addAll(CHANGE2);
+        layers[3].getChildren().addAll(punctuations);
+        layers[3].getChildren().addAll(BACK);
     }
 
     private void shiftToLower() {
@@ -215,6 +291,7 @@ public class InputScene extends BorderPane {
     private final Button ENTER = new Button("Enter");
     private final Button SPACE = new Button("Space");
     private final Button CHANGE = new Button("123");
+    private final Button CHANGE2 = new Button("#+=");
     private final Key A = new Key("a", "A", "a");
     private final Key B = new Key("b", "B", "b");
     private final Key C = new Key("c", "C", "c");
@@ -261,5 +338,31 @@ public class InputScene extends BorderPane {
     private final Key EIGHT = new Key("8", "8", "8");
     private final Key NINE = new Key("9", "9", "9");
     private final Key ZERO = new Key("0", "0", "0");
+    private final ObservableList<Key> numbers = FXCollections.observableArrayList(ONE, TWO,
+            THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, ZERO);
+
+    private final Key HIPHEN = new Key("-", "-", "-");
+    private final Key FORSLASH = new Key("/", "/", "/");
+    private final Key COLON = new Key(":", ":", ":");
+    private final Key SEMICOLON = new Key(";", ";", ";");
+    private final Key FORPAREN = new Key("(", "(", "(");
+    private final Key BACKPAREN = new Key(")", ")", ")");
+    private final Key DOLLAR = new Key("$", "$", "$");
+    private final Key AMPER = new Key("&", "&", "&");
+    private final Key AT = new Key("@", "@", "@");
+    private final Key QUOTE = new Key("\"", "\"", "\"");
+
+    private final ObservableList<Key> symbols1 = FXCollections.observableArrayList(HIPHEN,
+            FORSLASH, COLON, SEMICOLON, FORPAREN, BACKPAREN, DOLLAR,
+            AMPER, AT, QUOTE);
+
+    private final Key PERIOD = new Key(".", ".", ".");
+    private final Key COMMA = new Key(",", ",", ",");
+    private final Key QUESTION = new Key("?", "?", "?");
+    private final Key EXCLAMATION = new Key("!", "!", "!");
+    private final Key APOSTROPHE = new Key("'", "'", "'");
+
+    private final ObservableList<Key> punctuations = FXCollections.observableArrayList(PERIOD,
+            COMMA, QUESTION, EXCLAMATION, APOSTROPHE);
 
 }
