@@ -7,11 +7,14 @@ package keyboard;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -29,6 +32,8 @@ public class InputScene extends BorderPane {
 
     public static InputScene getInputScene(TextInputControl cur) {
         current = cur;
+        //System.out.println(cur.getLayoutY());
+        //System.out.println(cur.get)
         //System.out.println("set");
         if (scene == null) {
             scene = new InputScene();
@@ -42,7 +47,7 @@ public class InputScene extends BorderPane {
     private InputScene() {
         Rectangle2D vb = Screen.getPrimary().getVisualBounds();
         double a = vb.getWidth() - 130;
-        double b = (vb.getHeight() / 2) - 80;
+        double b = (vb.getHeight() *0.4);
         setStyle("-fx-background-color:white;");
         total = new VBox(10);
         setCenter(total);
@@ -86,11 +91,21 @@ public class InputScene extends BorderPane {
                 SHIFT.setStyle("-fx-background-color:blue;");
             }
         });
+        BACK.setMaxWidth(a / 10);
+        BACK.setMinWidth(a / 10);
+        BACK.setMinHeight(b / 5);
+        BACK.setMaxHeight(b / 5);
+        BACK.setFont(new Font(Math.sqrt(a * b) / 25));
         BACK.setOnAction((e) -> {
             if (current != null) {
-                current.insertText(current.getCaretPosition(), "\b");
+                int car = current.getCaretPosition();
+                if (car > 0) {
+                    current.setText(current.getText().substring(0, car - 1) + current.getText().substring(car));
+                    current.positionCaret(car - 1);
+                }
             }
         });
+        layers[4].getChildren().addAll(CHANGE, SPACE, DOWN, ENTER);
         CHANGE.setOnAction((e) -> {
             if (CHANGE.getText().equals("123")) {
                 CHANGE.setText("abc");
@@ -99,32 +114,55 @@ public class InputScene extends BorderPane {
             }
         });
         ENTER.setOnAction((e) -> {
-
+            if (current != null) {
+                if (current instanceof TextField) {
+                    TextField tf = (TextField)current;
+                    tf.getOnAction().handle(new ActionEvent(null, tf));
+                } else {
+                    current.insertText(current.getCaretPosition(), "\n");
+                }
+            }
         });
         SPACE.setOnAction((e) -> {
             if (current != null) {
                 current.insertText(current.getCaretPosition(), " ");
             }
         });
-        layers[4].getChildren().addAll(CHANGE, SPACE, BACK);
+        DOWN.setOnAction((e) -> {
+            FocusHandler.getInputScene().removeKeyboard();
+        });
+        CHANGE.setFocusTraversable(false);
+        SPACE.setFocusTraversable(false);
+        ENTER.setFocusTraversable(false);
+        BACK.setFocusTraversable(false);
+        DOWN.setFocusTraversable(false);
 
-        CHANGE.setMaxWidth(a / 4);
-        CHANGE.setMinWidth(a / 4);
+        CHANGE.setMaxWidth(a / 5);
+        CHANGE.setMinWidth(a / 5);
         CHANGE.setMinHeight(b / 5);
         CHANGE.setMaxHeight(b / 5);
+        CHANGE.setFont(new Font(Math.sqrt(a * b) / 25));
 
-        SPACE.setMinWidth(a / 2);
-        SPACE.setMaxWidth(a / 2);
+        SPACE.setMinWidth(a / 3);
+        SPACE.setMaxWidth(a / 3);
         SPACE.setMinHeight(b / 5);
         SPACE.setMaxHeight(b / 5);
+        SPACE.setFont(new Font(Math.sqrt(a * b) / 25));
 
-        BACK.setMaxWidth(a / 4);
-        BACK.setMinWidth(a / 4);
-        BACK.setMinHeight(b / 5);
-        BACK.setMaxHeight(b / 5);
-        BACK.setFont(new Font(Math.sqrt(a * b) / 25));
+        ENTER.setMaxWidth(a / 5);
+        ENTER.setMinWidth(a / 5);
+        ENTER.setMinHeight(b / 5);
+        ENTER.setMaxHeight(b / 5);
+        ENTER.setFont(new Font(Math.sqrt(a * b) / 25));
+        
+        DOWN.setMaxWidth(a / 5);
+        DOWN.setMinWidth(a / 5);
+        DOWN.setMinHeight(b / 5);
+        DOWN.setMaxHeight(b / 5);
+        DOWN.setFont(new Font(Math.sqrt(a * b) / 25));
 
-        total.getChildren().addAll(layers);
+        total.getChildren().addAll(layers[1], layers[2], 
+                layers[3], layers[4]);
         setMaxWidth(vb.getWidth());
         setMinWidth(vb.getWidth());
         setMaxHeight(vb.getHeight() / 2);
@@ -171,6 +209,7 @@ public class InputScene extends BorderPane {
         }
 
     }
+    private final Button DOWN = new Button("Retract");
     private final Button SHIFT = new Button("Shift");
     private final Button BACK = new Button("<-");
     private final Button ENTER = new Button("Enter");

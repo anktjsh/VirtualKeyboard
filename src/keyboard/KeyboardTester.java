@@ -39,9 +39,11 @@ public class KeyboardTester extends Application {
                 System.exit(0);
             }
         });
-        TextField tf;
+        TextField tf, tfg;
         ap.setTop(tf = new TextField());
+        ap.setBottom(tfg = new TextField());
         FocusHandler.getInputScene().addTextControl(tf);
+        FocusHandler.getInputScene().addTextControl(tfg);
         ap.setCenter(new VBox(new Button("Hello"),
                 new Button("Hello"), new Button("Hello"), new Button("Hello"), new Button("Hello")));
         st.show();
