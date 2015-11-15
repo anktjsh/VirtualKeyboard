@@ -46,11 +46,15 @@ public class FocusHandler {
     private Pane keyboard;
 
     public void addTextControls(TextInputControl... tl) {
-
+        for (TextInputControl til : tl) {
+            addTextControl(til);
+        }
     }
 
     public void addTextControls(List<TextInputControl> tl) {
-
+        for (TextInputControl til : tl) {
+            addTextControl(til);
+        }
     }
 
     public void addTextControl(TextInputControl tl) {
@@ -68,20 +72,13 @@ public class FocusHandler {
     }
 
     public void removeKeyboard() {
-        //if (keyboard instanceof StackPane) {
         if (keyboard.getChildren().get(0).equals(previousRoot)) {
             keyboard.getChildren().remove(previousRoot);
         } else {
-            //keyboard.getChildren().get(0);
-            //keyboard.getChildren().clear();
             if (previousRoot.getParent() != null) {
                 ((VBox) previousRoot.getParent()).getChildren().remove(previousRoot);
             }
-            //((VBox)(keyboard.getChildren().get(1))).getChildren().remove(previousRoot);
         }
-//        } else {
-//            //((ScrollPane)((BorderPane)keyboard).getCenter()).setContent(null);
-//        }        
         if (previousRoot.getParent() != null) {
             System.out.println(previousRoot.getParent().getClass().getName());
         }
@@ -91,15 +88,14 @@ public class FocusHandler {
     private static Pane installKeyboard(Parent pa, TextInputControl tl) {
         double loc = tl.getLayoutY();
         double height = Screen.getPrimary().getVisualBounds().getHeight() / 2;
+        StackPane sp = new StackPane();
         if (loc < height) {
-            StackPane sp = new StackPane();
             sp.getChildren().add(pa);
             InputScene inputScene = InputScene.getInputScene(tl);
             StackPane.setAlignment(inputScene, Pos.BOTTOM_CENTER);
             sp.getChildren().add(inputScene);
             return sp;
         } else {
-            StackPane sp = new StackPane();
             HBox hb = new HBox();
             hb.setMinHeight(loc - height);
             VBox vb = new VBox(pa, hb);

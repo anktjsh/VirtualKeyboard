@@ -14,8 +14,6 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -33,9 +31,6 @@ public class InputScene extends BorderPane {
 
     public static InputScene getInputScene(TextInputControl cur) {
         current = cur;
-        //System.out.println(cur.getLayoutY());
-        //System.out.println(cur.get)
-        //System.out.println("set");
         if (scene == null) {
             scene = new InputScene();
         }
@@ -171,6 +166,7 @@ public class InputScene extends BorderPane {
         CHANGE.setFocusTraversable(false);
         CHANGE2.setFocusTraversable(false);
         SPACE.setFocusTraversable(false);
+        SHIFT.setFocusTraversable(false);
         ENTER.setFocusTraversable(false);
         BACK.setFocusTraversable(false);
         DOWN.setFocusTraversable(false);
