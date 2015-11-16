@@ -42,8 +42,8 @@ public class KeyboardTester extends Application {
         TextField tf, tfg;
         ap.setTop(tf = new TextField());
         ap.setBottom(tfg = new TextField());
-        FocusHandler.getInputScene().addTextControl(tf);
-        FocusHandler.getInputScene().addTextControl(tfg);
+        FocusHandler.getFocusHandler().addTextControl(tf);
+        FocusHandler.getFocusHandler().addTextControl(tfg);
         ap.setCenter(new VBox(new Button("Hello"),
                 new Button("Hello"), new Button("Hello"), new Button("Hello"), new Button("Hello")));
         st.show();
@@ -53,10 +53,6 @@ public class KeyboardTester extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-//        for (int x=65;x<65+26;x++) {
-//            System.out.println("private final Key " + (char)(x) + " = new Key(\"" +(char)(x) +"\"" + ", \""+(char)(x) +"\""
-//            +", \"" + (char)(x+32)+"\");");
-//        }
         launch(args);
     }
 

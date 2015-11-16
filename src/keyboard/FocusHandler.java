@@ -11,9 +11,7 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextInputControl;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -28,7 +26,7 @@ public class FocusHandler {
 
     private static FocusHandler handle;
 
-    public static FocusHandler getInputScene() {
+    public static FocusHandler getFocusHandler() {
         if (handle == null) {
             handle = new FocusHandler();
         }
@@ -37,7 +35,7 @@ public class FocusHandler {
 
     private final ObservableList<TextInputControl> all;
 
-    public FocusHandler() {
+    private FocusHandler() {
         all = FXCollections.observableArrayList();
     }
 
@@ -61,6 +59,7 @@ public class FocusHandler {
         all.add(tl);
         tl.focusedProperty().addListener((ob, older, newer) -> {
             if (newer) {
+                hideExistingKeyboard();
                 previousRoot = tl.getScene().getRoot();
                 lastScene = tl.getScene();
                 keyboard = installKeyboard(previousRoot, tl);
@@ -71,7 +70,7 @@ public class FocusHandler {
         });
     }
 
-    public void removeKeyboard() {
+    void removeKeyboard() {
         if (keyboard.getChildren().get(0).equals(previousRoot)) {
             keyboard.getChildren().remove(previousRoot);
         } else {
@@ -105,6 +104,10 @@ public class FocusHandler {
             sp.getChildren().add(inputScene);
             return sp;
         }
+    }
+    
+    public void hideExistingKeyboard(){
+        
     }
 
 }

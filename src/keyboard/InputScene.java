@@ -5,20 +5,28 @@
  */
 package keyboard;
 
+import javafx.animation.PauseTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
+import javafx.geometry.Side;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Screen;
+import javafx.util.Duration;
 
 /**
  *
@@ -29,7 +37,7 @@ public class InputScene extends BorderPane {
     private static InputScene scene;
     private static TextInputControl current;
 
-    public static InputScene getInputScene(TextInputControl cur) {
+    static InputScene getInputScene(TextInputControl cur) {
         current = cur;
         if (scene == null) {
             scene = new InputScene();
@@ -138,9 +146,9 @@ public class InputScene extends BorderPane {
         });
         CHANGE2.setOnAction((e) -> {
             if (CHANGE2.getText().equals("123")) {
-                //toNumbersFromSymbols();
+                toNumbersFromSymbols();
             } else {
-                //toSymbols();
+                toSymbols();
             }
         });
         ENTER.setOnAction((e) -> {
@@ -161,7 +169,7 @@ public class InputScene extends BorderPane {
             }
         });
         DOWN.setOnAction((e) -> {
-            FocusHandler.getInputScene().removeKeyboard();
+            FocusHandler.getFocusHandler().removeKeyboard();
         });
         CHANGE.setFocusTraversable(false);
         CHANGE2.setFocusTraversable(false);
@@ -208,20 +216,7 @@ public class InputScene extends BorderPane {
         setMaxHeight(vb.getHeight() / 2);
         setMinHeight(vb.getHeight() / 2);
 
-//        setOnKeyPressed((e) -> {
-//            getKey(e.getText());
-//        });
     }
-
-//    public void getKey(String text) {
-//        if (!text.isEmpty()) {
-//            for (Key k : letters) {
-//                if (k.getText().equalsIgnoreCase(text)) {
-//                    k.fire();
-//                }
-//            }
-//        }
-//    }
     private void toLetters() {
         layers[1].getChildren().clear();
         layers[2].getChildren().clear();
@@ -254,6 +249,38 @@ public class InputScene extends BorderPane {
         }
     }
 
+    private void toSymbols() {
+        
+    }
+
+    private void toNumbersFromSymbols() {
+
+    }
+
+    public void showMultipleSpellings(Button key, double x, double y) {
+        key.getContextMenu().show(key, Side.TOP, x, y);
+    }
+
+    private void addPressAndHoldHandler(Node node, Duration holdTime,
+            EventHandler<MouseEvent> handler) {
+
+        class Wrapper<T> {
+
+            T content;
+        }
+        Wrapper<MouseEvent> eventWrapper = new Wrapper<>();
+
+        PauseTransition holdTimer = new PauseTransition(holdTime);
+        holdTimer.setOnFinished(event -> handler.handle(eventWrapper.content));
+
+        node.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
+            eventWrapper.content = event;
+            holdTimer.playFromStart();
+        });
+        node.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> holdTimer.stop());
+        node.addEventHandler(MouseEvent.DRAG_DETECTED, event -> holdTimer.stop());
+    }
+
     private final class Key extends Button {
 
         private final String[] spellings;
@@ -270,6 +297,18 @@ public class InputScene extends BorderPane {
                     shiftToLower();
                 }
             });
+            ContextMenu cm = new ContextMenu();
+            for (String s : alternate) {
+                cm.getItems().add(new MenuItem(s));
+            }
+            for (MenuItem mi : cm.getItems()) {
+                mi.setOnAction(getOnAction());
+            }
+            setContextMenu(cm);
+            addPressAndHoldHandler(this, Duration.seconds(1),
+                    event -> {
+                        showMultipleSpellings(this, getLayoutX(), getLayoutY());
+                    });
         }
 
         public void toUpper() {
@@ -360,5 +399,7 @@ public class InputScene extends BorderPane {
 
     private final ObservableList<Key> punctuations = FXCollections.observableArrayList(PERIOD,
             COMMA, QUESTION, EXCLAMATION, APOSTROPHE);
-
+    
+//    private final Key 
+    private final ObservableList<Key> symbols = FXCollections.observableArrayList();
 }
