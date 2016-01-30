@@ -27,11 +27,10 @@ public class KeyboardTester extends Application {
 
     @Override
     public void start(Stage st) {
-        st.initStyle(StageStyle.UNDECORATED);
         st.setTitle("Virtual Keyboard");
         Rectangle2D vb = Screen.getPrimary().getVisualBounds();
         BorderPane ap;
-        st.setScene(new Scene(ap = new BorderPane(), vb.getWidth(), vb.getHeight(), Color.WHITE));
+        st.setScene(new Scene(ap = new BorderPane(), 500, 500));
         st.getScene().setOnKeyPressed((e) -> {
             if (e.getCode() == KeyCode.ESCAPE) {
                 st.close();

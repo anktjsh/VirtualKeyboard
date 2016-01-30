@@ -8,15 +8,8 @@ package keyboard;
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.Pos;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.TextInputControl;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-import javafx.stage.Screen;
+import javafx.stage.Popup;
 
 /**
  *
@@ -39,10 +32,6 @@ public class FocusHandler {
         all = FXCollections.observableArrayList();
     }
 
-    private Parent previousRoot;
-    private Scene lastScene;
-    private Pane keyboard;
-
     public void addTextControls(TextInputControl... tl) {
         for (TextInputControl til : tl) {
             addTextControl(til);
@@ -60,54 +49,47 @@ public class FocusHandler {
         tl.focusedProperty().addListener((ob, older, newer) -> {
             if (newer) {
                 hideExistingKeyboard();
-                previousRoot = tl.getScene().getRoot();
-                lastScene = tl.getScene();
-                keyboard = installKeyboard(previousRoot, tl);
-                lastScene.setRoot(keyboard);
+                installKeyboard(tl);
             } else {
                 removeKeyboard();
             }
         });
     }
+    
+    private static Popup popup;
 
     void removeKeyboard() {
-        if (keyboard.getChildren().get(0).equals(previousRoot)) {
-            keyboard.getChildren().remove(previousRoot);
-        } else {
-            if (previousRoot.getParent() != null) {
-                ((VBox) previousRoot.getParent()).getChildren().remove(previousRoot);
-            }
+        if (popup!=null){
+            popup.hide();
         }
-        if (previousRoot.getParent() != null) {
-            System.out.println(previousRoot.getParent().getClass().getName());
-        }
-        lastScene.setRoot(previousRoot);
     }
 
-    private static Pane installKeyboard(Parent pa, TextInputControl tl) {
-        double loc = tl.getLayoutY();
-        double height = Screen.getPrimary().getVisualBounds().getHeight() / 2;
-        StackPane sp = new StackPane();
-        if (loc < height) {
-            sp.getChildren().add(pa);
-            InputScene inputScene = InputScene.getInputScene(tl);
-            StackPane.setAlignment(inputScene, Pos.BOTTOM_CENTER);
-            sp.getChildren().add(inputScene);
-            return sp;
+    private static void installKeyboard(TextInputControl tl) {
+        Popup p = new Popup();
+        p.getContent().add(InputScene.getInputScene(tl));
+        double layoutY = tl.getLayoutY();
+        System.out.println(layoutY);
+        double height = tl.getScene().getWindow().getHeight();
+        if (layoutY>height/2) {
+            p.show(tl.getScene().getWindow(), tl.getScene().getWindow().getX()+8, layoutY-height/2);
         } else {
-            HBox hb = new HBox();
-            hb.setMinHeight(loc - height);
-            VBox vb = new VBox(pa, hb);
-            sp.getChildren().add(vb);
-            InputScene inputScene = InputScene.getInputScene(tl);
-            StackPane.setAlignment(inputScene, Pos.BOTTOM_CENTER);
-            sp.getChildren().add(inputScene);
-            return sp;
+            p.show(tl.getScene().getWindow(), tl.getScene().getWindow().getX()+8, height/2);
         }
+//        tl.getScene().getWindow().xProperty().addListener((ob, older, newer) -> {
+//            p.hide();
+//            p.getContent().clear();
+//            p.getContent().add(InputScene.getInputScene(tl));
+//        });
+//        tl.getScene().getWindow().yProperty().addListener((ob, older, newer) -> {
+//            p.hide();
+//            p.getContent().clear();
+//            p.getContent().add(InputScene.getInputScene(tl));
+//        });
+        popup = p;
     }
-    
-    public void hideExistingKeyboard(){
-        
+
+    public void hideExistingKeyboard() {
+
     }
 
 }

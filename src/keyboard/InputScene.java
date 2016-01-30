@@ -12,7 +12,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.geometry.Rectangle2D;
 import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -25,7 +24,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import javafx.stage.Screen;
+import javafx.stage.Window;
 import javafx.util.Duration;
 
 /**
@@ -42,29 +41,16 @@ public class InputScene extends BorderPane {
         if (scene == null) {
             scene = new InputScene();
         }
+        scene.resize(cur.getScene().getWindow());
         return scene;
     }
-
-    private final HBox[] layers;
-    private final VBox total;
-
-    private InputScene() {
-        Rectangle2D vb = Screen.getPrimary().getVisualBounds();
-        double a = vb.getWidth() - 130;
-        double b = (vb.getHeight() * 0.4);
-        setStyle("-fx-background-color:white;");
-        total = new VBox(10);
-        setCenter(total);
-        total.setPadding(new Insets(5, 10, 5, 10));
-        layers = new HBox[5];
-        for (int x = 0; x < layers.length; x++) {
-            layers[x] = new HBox(10);
-            layers[x].setPadding(new Insets(5, 10, 5, 10));
-            layers[x].setAlignment(Pos.CENTER);
-        }
-        layers[1].getChildren().addAll(Q, W, E, R, T, Y, U, I, O, P);
-        layers[2].getChildren().addAll(A, S, D, F, G, H, J, K, L);
-        layers[3].getChildren().addAll(SHIFT, Z, X, C, V, B, N, M, BACK);
+    
+    private void resize(Window w) {
+        resizeScene(w.getWidth()-150, w.getHeight()*0.3);
+        setMaxHeight(w.getHeight()/2);
+    }
+    
+    private void resizeScene(double a, double b) {
         for (int x = 0; x < letters.size(); x++) {
             letters.get(x).setMaxWidth(a / 10);
             letters.get(x).setMinWidth(a / 10);
@@ -96,13 +82,69 @@ public class InputScene extends BorderPane {
             punctuations.get(x).setMaxHeight(b / 4);
             punctuations.get(x).setFont(new Font(Math.sqrt(a * b) / 25));
             punctuations.get(x).setFocusTraversable(false);
-        }
+        }        
 
         SHIFT.setMaxWidth(a / 7);
         SHIFT.setMinWidth(a / 7);
         SHIFT.setMinHeight(b / 4);
         SHIFT.setMaxHeight(b / 4);
         SHIFT.setFont(new Font(Math.sqrt(a * b) / 25));
+        
+        BACK.setMaxWidth(a / 7);
+        BACK.setMinWidth(a / 7);
+        BACK.setMinHeight(b / 4);
+        BACK.setMaxHeight(b / 4);
+        BACK.setFont(new Font(Math.sqrt(a * b) / 25));
+        
+        CHANGE.setMaxWidth(a / 8);
+        CHANGE.setMinWidth(a / 8);
+        CHANGE.setMinHeight(b / 4);
+        CHANGE.setMaxHeight(b / 4);
+        CHANGE.setFont(new Font(Math.sqrt(a * b) / 25));
+
+        CHANGE2.setMaxWidth(a / 8);
+        CHANGE2.setMinWidth(a / 8);
+        CHANGE2.setMinHeight(b / 4);
+        CHANGE2.setMaxHeight(b / 4);
+        CHANGE2.setFont(new Font(Math.sqrt(a * b) / 25));
+
+        SPACE.setMinWidth(a / 1.5);
+        SPACE.setMaxWidth(a / 1.5);
+        SPACE.setMinHeight(b / 4);
+        SPACE.setMaxHeight(b / 4);
+        SPACE.setFont(new Font(Math.sqrt(a * b) / 25));
+
+        ENTER.setMaxWidth(a / 8);
+        ENTER.setMinWidth(a / 8);
+        ENTER.setMinHeight(b / 4);
+        ENTER.setMaxHeight(b / 4);
+        ENTER.setFont(new Font(Math.sqrt(a * b) / 25));
+
+        DOWN.setMaxWidth(a / 8);
+        DOWN.setMinWidth(a / 8);
+        DOWN.setMinHeight(b / 4);
+        DOWN.setMaxHeight(b / 4);
+        DOWN.setFont(new Font(Math.sqrt(a * b) / 25));
+    }
+
+    private final HBox[] layers;
+    private final VBox total;
+
+    private InputScene() {
+        setStyle("-fx-background-color:white;");
+        total = new VBox(10);
+        setCenter(total);
+        total.setPadding(new Insets(5, 10, 5, 10));
+        layers = new HBox[4];
+        for (int x = 0; x < layers.length; x++) {
+            layers[x] = new HBox(10);
+            layers[x].setPadding(new Insets(5, 10, 5, 10));
+            layers[x].setAlignment(Pos.CENTER);
+        }
+        layers[0].getChildren().addAll(Q, W, E, R, T, Y, U, I, O, P);
+        layers[1].getChildren().addAll(A, S, D, F, G, H, J, K, L);
+        layers[2].getChildren().addAll(SHIFT, Z, X, C, V, B, N, M, BACK);
+        
         SHIFT.setOnMouseClicked((e) -> {
             int clic = e.getClickCount();
             if (clic == 1) {
@@ -120,11 +162,7 @@ public class InputScene extends BorderPane {
                 SHIFT.setStyle("-fx-background-color:blue;");
             }
         });
-        BACK.setMaxWidth(a / 7);
-        BACK.setMinWidth(a / 7);
-        BACK.setMinHeight(b / 4);
-        BACK.setMaxHeight(b / 4);
-        BACK.setFont(new Font(Math.sqrt(a * b) / 25));
+        
         BACK.setOnAction((e) -> {
             if (current != null) {
                 int car = current.getCaretPosition();
@@ -134,7 +172,7 @@ public class InputScene extends BorderPane {
                 }
             }
         });
-        layers[4].getChildren().addAll(CHANGE, DOWN, SPACE, ENTER);
+        layers[3].getChildren().addAll(CHANGE, DOWN, SPACE, ENTER);
         CHANGE.setOnAction((e) -> {
             if (CHANGE.getText().equals("123")) {
                 toNumbers();
@@ -170,6 +208,7 @@ public class InputScene extends BorderPane {
         });
         DOWN.setOnAction((e) -> {
             FocusHandler.getFocusHandler().removeKeyboard();
+            current.getParent().requestFocus();
         });
         CHANGE.setFocusTraversable(false);
         CHANGE2.setFocusTraversable(false);
@@ -177,64 +216,29 @@ public class InputScene extends BorderPane {
         SHIFT.setFocusTraversable(false);
         ENTER.setFocusTraversable(false);
         BACK.setFocusTraversable(false);
-        DOWN.setFocusTraversable(false);
+        DOWN.setFocusTraversable(false);        
 
-        CHANGE.setMaxWidth(a / 8);
-        CHANGE.setMinWidth(a / 8);
-        CHANGE.setMinHeight(b / 4);
-        CHANGE.setMaxHeight(b / 4);
-        CHANGE.setFont(new Font(Math.sqrt(a * b) / 25));
-
-        CHANGE2.setMaxWidth(a / 8);
-        CHANGE2.setMinWidth(a / 8);
-        CHANGE2.setMinHeight(b / 4);
-        CHANGE2.setMaxHeight(b / 4);
-        CHANGE2.setFont(new Font(Math.sqrt(a * b) / 25));
-
-        SPACE.setMinWidth(a / 1.5);
-        SPACE.setMaxWidth(a / 1.5);
-        SPACE.setMinHeight(b / 4);
-        SPACE.setMaxHeight(b / 4);
-        SPACE.setFont(new Font(Math.sqrt(a * b) / 25));
-
-        ENTER.setMaxWidth(a / 8);
-        ENTER.setMinWidth(a / 8);
-        ENTER.setMinHeight(b / 4);
-        ENTER.setMaxHeight(b / 4);
-        ENTER.setFont(new Font(Math.sqrt(a * b) / 25));
-
-        DOWN.setMaxWidth(a / 8);
-        DOWN.setMinWidth(a / 8);
-        DOWN.setMinHeight(b / 4);
-        DOWN.setMaxHeight(b / 4);
-        DOWN.setFont(new Font(Math.sqrt(a * b) / 25));
-
-        total.getChildren().addAll(layers[1], layers[2],
-                layers[3], layers[4]);
-        setMaxWidth(vb.getWidth());
-        setMinWidth(vb.getWidth());
-        setMaxHeight(vb.getHeight() / 2);
-        setMinHeight(vb.getHeight() / 2);
-
+        total.getChildren().addAll(layers[0], layers[1],
+                layers[2], layers[3]);
     }
     private void toLetters() {
+        layers[0].getChildren().clear();
         layers[1].getChildren().clear();
         layers[2].getChildren().clear();
-        layers[3].getChildren().clear();
-        layers[1].getChildren().addAll(top);
-        layers[2].getChildren().addAll(mid);
-        layers[3].getChildren().addAll(SHIFT, Z, X, C, V, B, N, M, BACK);
+        layers[0].getChildren().addAll(top);
+        layers[1].getChildren().addAll(mid);
+        layers[2].getChildren().addAll(SHIFT, Z, X, C, V, B, N, M, BACK);
     }
 
     private void toNumbers() {
+        layers[0].getChildren().clear();
         layers[1].getChildren().clear();
         layers[2].getChildren().clear();
-        layers[3].getChildren().clear();
-        layers[1].getChildren().addAll(numbers);
-        layers[2].getChildren().addAll(symbols1);
-        layers[3].getChildren().addAll(CHANGE2);
-        layers[3].getChildren().addAll(punctuations);
-        layers[3].getChildren().addAll(BACK);
+        layers[0].getChildren().addAll(numbers);
+        layers[1].getChildren().addAll(symbols1);
+        layers[2].getChildren().addAll(CHANGE2);
+        layers[2].getChildren().addAll(punctuations);
+        layers[2].getChildren().addAll(BACK);
     }
 
     private void shiftToLower() {
@@ -320,7 +324,7 @@ public class InputScene extends BorderPane {
         }
 
     }
-    private final Button DOWN = new Button("Retract");
+    private final Button DOWN = new Button("▼");
     private final Button SHIFT = new Button("Shift");
     private final Button BACK = new Button("<-");
     private final Button ENTER = new Button("Enter");
